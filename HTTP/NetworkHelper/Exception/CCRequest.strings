@@ -1,0 +1,32 @@
+/* constructing body when using AFNetWorking POST*/
+"construct body error" = "";
+
+/*empty response object*/
+"empty response" = "网络连接失败，请稍后重试";
+
+/*response string is not json string*/
+"response is not json" = "网络连接失败，请稍后重试";
+
+/*can not connect to network*/
+"no connection" = "请检查网络连接是否正常";
+
+/*user canceled request*/
+"user cancel" = "取消请求";
+
+/*internal error*/
+"internal error" = "网络连接失败，请稍后重试";
+
+/*business error up to server*/
+"business error" = "请求数据异常";
+
+/*invalid request*/
+"invalid request" = "错误的请求";
+
+/*request time out*/
+"time out" = "请求超时";
+
+/*bad response*/
+"invalid response" = "错误的网络状态码";
+
+/*unkown error*/
+"unkown error" = "服务器异常,请稍后再试";
