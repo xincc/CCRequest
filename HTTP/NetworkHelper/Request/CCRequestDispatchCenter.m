@@ -174,6 +174,7 @@
         default: {
             CCResponseError *error = [CCResponseError errorWithCode:kCCResponseErrorCodeFailRequst userInfo:nil];
             [self failWithParam:[request handleFailParam:nil error:error] RParam:request];
+            [self resolveRequest:request];
             return;
         }
     }

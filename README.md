@@ -145,11 +145,15 @@ typedef NS_ENUM(NSUInteger, CCDataCachePolicy) {
 * 支持应对五花八门的后端框架的方案
 
 
+####示例代码
+* [SampleRequest](https://github.com/xincc/CCRequest/blob/master/CCRequest/SampleRequest.m)
+* [SamplePHPRequest](https://github.com/xincc/CCRequest/blob/master/CCRequest/SamplePHPRequest.m)
+
 ####补刀的时候到了
 
-```objc
-详细设计请参阅CCRequest类
-```
+
+`详细设计请参阅` [CCRequest](https://github.com/xincc/CCRequest/blob/master/HTTP/NetworkHelper/Request/CCRequest.h)
+
 
 ## TODO
 
