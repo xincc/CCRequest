@@ -21,10 +21,15 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+    //这是一个网络层解决方案, 该Demo不提供UI
+    //默认是测试next的catch功能(任务链上将会发生异常)
+    //若希望看到正常的任务链 请将 SampleRequestModel.m 文件中的requestUrl设置修改为将会成功的case
+    
+    [self testNext];
+    
 //    [self testThen];
-//    [self testNext];
 //    [self testAll];
-    [self testNormal];
+//    [self testNormal];
     
 }
 

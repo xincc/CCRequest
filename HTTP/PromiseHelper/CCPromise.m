@@ -13,10 +13,9 @@ typedef CCPromise*(^CCPromiseWorkEventHandler)();
 
 @interface CCPromise()
 
-@property (nonatomic, copy) void(^done)();
-
+@property (nonatomic, copy  ) void(^done)();
 @property (nonatomic, strong) id data;
-
+@property (nonatomic, weak  ) CCPromise *resolver;
 @property (nonatomic, assign) BOOL called;
 
 @property (nonatomic, assign) CCPromiseResoverStatus status;
@@ -34,7 +33,6 @@ typedef CCPromise*(^CCPromiseWorkEventHandler)();
 - (void)dealloc {
 //    NSLog(@"promise dealloc %p", self);
 }
-
 
 - (instancetype)init {
     self = [super init];
@@ -60,7 +58,7 @@ typedef CCPromise*(^CCPromiseWorkEventHandler)();
  */
 - (CCPromise *)chainNodePromiseWithResover:(CCPromise *)resolver {
     CCPromise *promise = [[CCPromise alloc] init];
-    promise.resover = resolver?:self;
+    promise.resolver = resolver?:self;
     [promise setup];
     return promise;
 }
@@ -91,11 +89,11 @@ typedef CCPromise*(^CCPromiseWorkEventHandler)();
             return work();
         };
         
-        CCPromise *resover = self.resover?:self;
+        CCPromise *resolver = self.resolver?:self;
 
         [self addListener:CCPromiseResoverStatusRejected callback:warpedOnRejected];
         
-        [resover addListener:CCPromiseResoverStatusRejected callback:warpedOnRejected];
+        [resolver addListener:CCPromiseResoverStatusRejected callback:warpedOnRejected];
         
         return self;
     };
@@ -106,7 +104,7 @@ typedef CCPromise*(^CCPromiseWorkEventHandler)();
 - (CCPromise *)then:(CCPromiseEventHandler)onFulfilled
          onRejected:(CCPromiseEventHandler)onRejected {
     
-    CCPromise *promise = [self chainNodePromiseWithResover:self.resover];
+    CCPromise *promise = [self chainNodePromiseWithResover:self.resolver];
     
     __weak __typeof(self) weakPromise = promise;
     if (onFulfilled) {
@@ -140,7 +138,7 @@ typedef CCPromise*(^CCPromiseWorkEventHandler)();
 
 - (CCPromise *)next:(CCPromiseEventHandler)onFulfilled {
     
-    CCPromise *promise = [self chainNodePromiseWithResover:self.resover];
+    CCPromise *promise = [self chainNodePromiseWithResover:self.resolver];
     
     __weak __typeof(self) weakPromise = promise;
     if (onFulfilled) {
@@ -157,7 +155,7 @@ typedef CCPromise*(^CCPromiseWorkEventHandler)();
     [self addListener:CCPromiseResoverStatusRejected callback:^id(id reason) {
 //#warning Need Warp
         __strong __typeof(weakPromise) promise = weakPromise;
-        CCPromise *resover = promise.resover;
+        CCPromise *resover = promise.resolver;
         if (resover && resover.status == CCPromiseResoverStatusFulfilled) {
             resover.status = CCPromiseResoverStatusPending;
         }

@@ -33,8 +33,6 @@ typedef id(^CCPromiseEventHandler)(id);
 
 @property (nonatomic, copy) dispatch_block_t run;
 
-@property (nonatomic, weak) CCPromise* resover;
-
 + (CCPromise *)all:(NSArray<CCPromise *> *)promises;
 
 + (CCPromise *)promise;

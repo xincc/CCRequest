@@ -31,7 +31,11 @@
         self.requestArgument = model.dictionaryValue;
     }
     
-    self.requestUrl = @"http://www.chojer.com/sys.php/api/hot_search";
+    //这个url用于测试失败的情况
+    self.requestUrl = @"http://nj03-vip-sandbox.nj03.baidu.com:8008/common-api/data/Superproductrecommendlist";
+    //这个url用于测试成功的请求
+//    self.requestUrl = @"http://www.chojer.com/sys.php/api/hot_search";
+    
     self.requestMethod = CCRequestMethodPost;
     self.requestCachePolicy = CCRequestReloadRemoteDataIgnoringCacheData;
 
@@ -58,6 +62,11 @@
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&err];
         if (!data || err) {return;}
+        
+        
+        /**
+         *  某些场景要求在参数POST前面加上一个key
+         */
         [formData appendPartWithFormData:data name:@"request"];
         
     };
