@@ -8,7 +8,7 @@
 
 #import "ViewController.h"
 #import "Samples.h"
-
+#import "SampleRequestModel.h"
 
 @interface ViewController () <CCRequestAccessory>
 
@@ -42,11 +42,14 @@
         //即使发生异常也会开始下一个任务, 并且向下一个任务(第三个)传入 reason
         return reason;
         
-    }).then(^id(id data){
+    }).then(^id(id bar){
         
         //获取上一个任务的返回结果
         //开始第三个任务(后续没有Promise任务, 将不会处理这个异步任务的返回数据)
-        return [[[SamplePHPRequest new] bindRequestArgument:nil] promise];
+        
+        SampleRequestModel *model = [SampleRequestModel new];
+        model.foo = bar;
+        return [[[SamplePHPRequest new] bindRequestArgument:model] promise];
         
     },NULL);
 }

@@ -8,16 +8,30 @@
 
 
 #import "SamplePHPRequest.h"
+#import "SampleRequestModel.h"
 
 @implementation SamplePHPRequest
 
 - (CCRequest *)requestWithSuccess:(CCSuccessHandler)success failure:(CCFailureHandler)failure {
     
     if (self.requestArgument) {
+        
+        SampleRequestModel *model = self.requestArgument;
+        if (![model isKindOfClass:SampleRequestModel.class]) {
+            //若参数拼接发生错误,可在此抛出异常,并阻止发起请求.
+            CCResponseError *error = [CCResponseError errorWithCode:kCCResponseErrorCodeBusinessError
+                                                           userInfo:nil];
+            if (failure) {
+                failure(error, self);
+            }
+            return self;
+        }
+        
         //将self.requestArgument 转成字典格式
+        self.requestArgument = model.dictionaryValue;
     }
     
-    self.requestUrl = @"http://nj03-vip-sandbox.nj03.baidu.com:8008/common-api/data/Superproductrecommendlist";
+    self.requestUrl = @"http://www.chojer.com/sys.php/api/hot_search";
     self.requestMethod = CCRequestMethodPost;
     self.requestCachePolicy = CCRequestReloadRemoteDataIgnoringCacheData;
 
@@ -52,7 +66,7 @@
 - (id)handleSuccessParam:(id)responseObject
 {
     id response = [super handleSuccessParam:responseObject];
-    //model解析
+    //model解析, 该方法将在后台线程运行, 无需额外的线程操作
     //...
     return response;
 }

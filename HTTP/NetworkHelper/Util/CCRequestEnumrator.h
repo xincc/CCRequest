@@ -27,6 +27,7 @@ typedef NS_ENUM(NSInteger, CCResponseSerializerType) {
 
 typedef NS_ENUM(NSInteger, CCReachabilityLevel) {
     CCReachabilityLevelLocal,
+    //待实现
     CCReachabilityLevelReal
 };
 

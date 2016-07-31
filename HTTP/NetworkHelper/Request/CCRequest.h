@@ -132,7 +132,8 @@
 
 /**
  *  Model serialize operate, overwrite this method if needed
- *  Success with cache data will not call this mothod
+ *  Success with cache data will not call this mothod.
+ *  The Mothod is called in background thread.
  *
  *  @param responseObject Networking response object
  *

@@ -25,6 +25,7 @@
 		75F661C31C926CE70053E558 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 75F661C11C926CE70053E558 /* LaunchScreen.storyboard */; };
 		75F78D561CA54AC700B07297 /* CCCacheCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 75F78D551CA54AC700B07297 /* CCCacheCenter.m */; };
 		75F9077F1CB3E3560083853A /* CCRequest.strings in Resources */ = {isa = PBXBuildFile; fileRef = 75F9077E1CB3E3560083853A /* CCRequest.strings */; };
+		75FB28651D4DC906004C0183 /* SampleRequestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FB28641D4DC906004C0183 /* SampleRequestModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +68,8 @@
 		75F78D541CA54AC700B07297 /* CCCacheCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCCacheCenter.h; sourceTree = "<group>"; };
 		75F78D551CA54AC700B07297 /* CCCacheCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCCacheCenter.m; sourceTree = "<group>"; };
 		75F9077E1CB3E3560083853A /* CCRequest.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = CCRequest.strings; sourceTree = "<group>"; };
+		75FB28631D4DC906004C0183 /* SampleRequestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleRequestModel.h; sourceTree = "<group>"; };
+		75FB28641D4DC906004C0183 /* SampleRequestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleRequestModel.m; sourceTree = "<group>"; };
 		85D1DA9F86C74F2525AF42F3 /* Pods-CCRequest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CCRequest.release.xcconfig"; path = "Pods/Target Support Files/Pods-CCRequest/Pods-CCRequest.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -187,6 +190,8 @@
 			isa = PBXGroup;
 			children = (
 				7547F5BB1D4860B600D5D785 /* Samples.h */,
+				75FB28631D4DC906004C0183 /* SampleRequestModel.h */,
+				75FB28641D4DC906004C0183 /* SampleRequestModel.m */,
 				75D96FE01CABC4B6008CDB0A /* SampleRequest.h */,
 				75D96FE11CABC4B6008CDB0A /* SampleRequest.m */,
 				7547F5B81D485C3000D5D785 /* SamplePHPRequest.h */,
@@ -383,6 +388,7 @@
 				75D96FDE1CAA36A3008CDB0A /* CCCacheRequest.m in Sources */,
 				759F44E51C929488003A50CE /* CCRequest.m in Sources */,
 				759F44E81C9294FC003A50CE /* CCRequestDispatchCenter.m in Sources */,
+				75FB28651D4DC906004C0183 /* SampleRequestModel.m in Sources */,
 				75F78D561CA54AC700B07297 /* CCCacheCenter.m in Sources */,
 				7540B92E1C92B61B00682B1A /* CCRequestConstants.m in Sources */,
 				7540B9271C92A8A100682B1A /* CCResponseError.m in Sources */,

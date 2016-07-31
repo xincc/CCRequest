@@ -29,35 +29,49 @@
 - (id)handleSuccessParam:(id)responseObject
 {
     id response = [super handleSuccessParam:responseObject];
-    //模型解析 不解释了
+    //model解析, 该方法将在后台线程运行, 无需额外的线程操作
     //...
     return response;
 }
 
+
+
 - (NSString *)responseMessage {
     
-    //例如发生服务器宕机,抛出一些乱码,在这里干掉他们
-//    self.response.responseJSONObject...
+    //当发生服务器宕机,抛出一些乱码,可重写盖方法在这里过滤为友好的网络错误提示
+    //CCRequest有默认文案,亦可获取self.response.responseJSONObject 自行过滤
+    //修改默认文案请参阅 CCRequest.string
     
-    return [super responseMessage];//这就用默认的了,默认文案可以自己在CCResponseError.string文件里面改
+    return [super responseMessage];//这就用默认文案了
 }
 
 - (NSString *)responseStatusCode {
-    //你们后端要特殊处理每一个接口的校验字段? 在这里处理不就可以了
-//    return self.response.responseJSONObject[@"statusCode"];
     
+    //1.(或许是某个接口or后端换了一个架构)后端不按原有协议返回数据结构
+    //2.换了一个项目,换了数据结构
+    //...
+    //需要对数据合法性做校验的时候(一般根据数据中的statuCode, 但结构不是固定的,或因人,因项目而大同小异)
+    //可在此以一个接口为粒度重新适配新的数据结构
+    //如果大部分接口返回数据都一致,建议创建的自己的[业务基类]重写该方法 而不必每个接口文件都单独处理
+
     return [super responseStatusCode];//代码示例就用super的了
 }
 
-// 这几个方法假设你们server有特殊的访问控制 对应实现就行了
+// 若服务端有特殊的访问控制,可重写下面两个方法对应实现
+// 这两个方法是HTTP Header层面做访问控制
+// 当需要对url做特殊加密时 可以实现自己的Accessory
+// 仿照 CCSecurityPolicyAccessory的设计 以及用法
 - (NSArray*)requestAuthorizationHeaderFieldArray { return nil; }
 
 - (NSDictionary*)requestHeaderFieldValueDictionary { return nil; }
 
 
-//这几个方法是上传下载相关的  看API名字就知道什么鬼了
+// 需要手动拼接HTTP Body时, 重写该方法 例如:
+// 1.文件上传
+// 2.特殊参数拼接 (参见SamplePHPRequest.m的实现)
 - (CCConstructingBlock)constructingBodyBlock { return nil; }
 
+// 重写如下方法可监听上传/下载进度
 - (CCUploadProgressBlock)resumableUploadProgressBlock { return nil; }
 
 - (CCDownloadProgressBlock)resumableDownloadProgressBlock { return nil; }

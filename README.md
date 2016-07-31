@@ -5,6 +5,7 @@
 * Promise
 * Cache
 * HTTPS
+* Asynchronous serialize models
 
 ## Installation 
 * 将工程中的HTTP文件夹拖入工程
@@ -152,8 +153,9 @@ typedef NS_ENUM(NSUInteger, CCDataCachePolicy) {
 ####补刀的时候到了
 
 
-`详细设计请参阅` [CCRequest](https://github.com/xincc/CCRequest/blob/master/HTTP/NetworkHelper/Request/CCRequest.h)
-
+* 详细设计请参阅 [CCRequest](https://github.com/xincc/CCRequest/blob/master/HTTP/NetworkHelper/Request/CCRequest.h)
+* 建议继承[CCCacheRequest](https://github.com/xincc/CCRequest/blob/master/HTTP/ProtocolHelper/CCCacheRequest.h)实现自己的业务基类
+* Promise以及其他设计还有需要完善的地方,欢迎提ISSUE,或者给我发邮件.设计的初衷是尽可能`优雅地`满足`绝大多数`的网络使用场景,希望以您的网络层方案设计思想相互交流~
 
 ## TODO
 
