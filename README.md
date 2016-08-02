@@ -1,39 +1,53 @@
+
 # CCRequest
-一个不用和后端干架的HTTP(S)网络库,基于AFNetworking 3.0
+
+[中文介绍](https://github.com/xincc/CCRequest/README-CN.md)
+
+A dancing HTTP request framework base on AFNetworking 3.x for iOS & MacOS
 
 ## Features
 * Promise
 * Cache
 * HTTPS
-* Asynchronous serialize models
+* Asynchronous Model Serializing
+* Request Log convenient for Debug
+* Request Exception Catching
 
 ## Installation 
-* 将工程中的HTTP文件夹拖入工程
-* 在你的Pod文件中加入AFNetworking和YYCache(YYCache是默认的缓存库,可以遵循CCCacheProtocol协议,根据实际使用场景,无缝替换为原有的缓存库)
+* Add HTTP finder to your project.
+* Add AFNetworking & YYCache to your podfile. (YYCache is a default cache service and you can use your own cache service by implementing [CCCacheProtocol](https://github.com/xincc/CCRequest/blob/master/HTTP/NetworkHelper/Cache/CCCacheProtocol.h) protocol, CocoaLumberjack is recommendatory Log framework but you can ignore it too)
+
 
 ## Usage
 
-先看几个用Promise发起请求的姿势
+Dancing with promice
 
 #### Promise.then
 
 ```objc
-//开始第一个异步任务
+// Start first request task.
+
 SamplePHPRequest.new.promise.then(^id(id data){
-    //获取第一个数据的返回结果
-    //开始第二个异步任务
+
+    // Get result(`Model` or `RawData`) finish by first task.
+    // Then start sencond request task within promise.
+    
     return SamplePHPRequest.new.promise;
     
 },^id(CCResponseError *reason){
     
-    //捕获第一个任务的异常
-    //即使发生异常也会开始下一个任务, 并且向下一个任务(第三个)传入 reason
+    // If some bad things happend to first task you can catch it in this scope.
+    // But the error can't stop the promise chain.
+    // Exception(or some thing) will send to next promise(if exist) in return value.
+    
     return reason;
     
 }).then(^id(id data){
     
-    //获取上一个任务的返回结果
-    //开始第三个任务(后续没有Promise任务, 将不会处理这个异步任务的返回数据)
+    // Got result(`Model` or `RawData` or `Exception`) finish by previous promise.
+    // Then start third request task within promise.
+    // The result finish by third task will not be deal by Fornt End (Just send to server whithout care succeed or not).
+
     return [[[SamplePHPRequest new] bindRequestArgument:nil] promise];
     
 },NULL);
@@ -41,31 +55,40 @@ SamplePHPRequest.new.promise.then(^id(id data){
 
 #### Promise.next
 ```objc
+// start primise chain
+
 SamplePHPRequest.new.promise.next(^id(id data) {
     
-    //处理第一个请求的response 并将处理结果传入下一个promise
+
+    // Get result(`Model` or `RawData`) finish by first promised task.
+    // These scope will never get errors.    
     CCLogInfo(@"%@",data);
+    
+    // Send data to next node in promise chain encapsulated in return value
     return data;
     
 }).next(^id(id data){
     
-    //获取上一个promise的处理结果
-    //开始下一个网络请求
-    
+    // Get result finish by previous promised node.    
+    // Then start third request task within promise.
+
     return SamplePHPRequest.new.promise;
     
 }).next(^id(id data) {
     
-    //处理第二个请求的response
+    // Get result(`Model` or `RawData`) finish by previous promised node.    
+    CCLogInfo(@"Promise chain succeed");
     
-    CCLogInfo(@"任务链完成");
+    // Must return something, but will not sent to the `catch` node
     return data;
     
 }).catch(^(CCResponseError *reason) {
     
-    //捕获整个promis链上的异常(发生一个异常就会结束promise任务链)
-    
-    CCLogError(@"任务链失败: %@",reason);
+    // If some bad things happend to `the whole promise chain`, you can catch it in this scope.
+    // Peomise chain will be interrupted when catching any exception, 
+    // which meanse the rest of promise nodes will not be excuted forever.
+
+    CCLogError(@"Promise chain failed: %@",reason);
 });
 ```
 
@@ -73,93 +96,100 @@ SamplePHPRequest.new.promise.next(^id(id data) {
 ```objc
 [CCPromise all:@[SampleRequest.new.promise, SamplePHPRequest.new.promise]].then(^id(id data) {
     
-    //任务蔟都完成后调用逻辑
-    CCLogInfo(@"获得数据: %@",data);
+    // If all of the promsie succeed, you can catch their result in this scope.
+    // The data is an unordered array.
+    // Maybe Dictionary is more appropriate, the key is ordered by index in promises.
+
+    CCLogInfo(@"Get data: %@",data);
+    
+    // Must return something.
+    // I want to optimize it, please send me any suggestions.
     return CCPromise.fulfilled;
     
 }, ^id(CCResponseError *reason) {
     
-    //捕获整个任务簇的异常(发生一个异常就会结束所有任务)
-    CCLogError(@"捕获异常: %@",reason);
+    // If some bad things happend to `any promise in anof the promise`, you can catch it in this scope.
+    CCLogError(@"Catched Error: %@",reason);
     return CCPromise.rejected;
     
 });
 ```
 
-当然也可以用常规方式发起请求
-####常规方式
+
+####Normal Way
 ```objc
 SamplePHPRequest *request = [SamplePHPRequest new];
 [[request requestWithSuccess:^(id result, CCRequest *request) {
     
 } failure:^(CCResponseError *error, CCRequest *request) {
-    CCLogInfo(@"Cancel后将不会调用回调函数");
+    CCLogInfo(@"Never invoke the callback if you cancel the request");
 }] appendAccessory:self];
 ```
 
-####支持的Cache方案
+####Surported Cache Policy
 ```objc
-// 网络请求策略:
-
 typedef NS_ENUM(NSUInteger, CCRequestCachePolicy) {
     
-    // 永远忽略缓存,仅读远程数据
+    // Request server immediately
     CCRequestReloadRemoteDataIgnoringCacheData,
     
-    // 优先先读取缓存,若读取成功,不再发起请求,反之读远程数据
+    // Searching cache data first, return if hited data; otherwise request server data
     CCRequestReturnCacheDataElseReloadRemoteData,
     
-    // 优先先读取缓存,若读取成功,先执行回调逻辑,再读远程数据,反之读远程数据
+    // Searching cache data first, invoke callbacks if hited data
+    // No matter succeed or not we request server data
     CCRequestReturnCacheDataThenReloadRemoteData,
     
-    // 优先读取远程数据,若读取失败,读取缓存
+    // Request server data first, searching cache data if failed
     CCRequestReloadRemoteDataElseReturnCacheData,
 };
 
-// 缓存读取策略:
+// Cache Hitting Policy:
 
 typedef NS_ENUM(NSUInteger, CCReturnCachePolicy) {
     
-    // 按设置的缓存过期时间读取
+    // hit by fire time
     CCReturnCacheDataByFireTime,
     
-    // 若有缓存,强制重新激活缓存后读取
+    // hit by revalidating fired time if exist
     CCReloadRevalidatingCacheData
 };
 
-// 数据缓存策略:
+// Cache Write Policy:
 
 typedef NS_ENUM(NSUInteger, CCDataCachePolicy) {
     
-    // 缓存解析后的模型(如果使用默认的缓存服务,要求模型层实现NSCoding协议)
+    // Cache Models 
+    // Implement NSCoding protocol if you use the default cache service
     CCCachePolicyModel,
     
-    // 缓存JSON对象或者元数据,取决于CCResponseSerializerType
+    // Cache raw data
+    // JSON object for CCResponseSerializerTypeJSON
+    // RawData for CCResponseSerializerTypeRawData
     CCCachePolicyRawData,
 };
 
 ```
 
-####其他特性
-* 支持自定义请求合法性验证
-* 支持自定义网络访问控制书写
-* 支持应对五花八门的后端框架的方案
+####Other advantages
+* Surporting implement your request custom validator
+* Surporting custom authorization or HTTP header
+* Saving your time when facing to dazzling server frameworks
 
 
-####示例代码
+####Sample Codes
 * [SampleRequest](https://github.com/xincc/CCRequest/blob/master/CCRequest/SampleRequest.m)
 * [SamplePHPRequest](https://github.com/xincc/CCRequest/blob/master/CCRequest/SamplePHPRequest.m)
 
-####补刀的时候到了
+####Time to Fill knife
 
-
-* 详细设计请参阅 [CCRequest](https://github.com/xincc/CCRequest/blob/master/HTTP/NetworkHelper/Request/CCRequest.h)
-* 建议继承[CCCacheRequest](https://github.com/xincc/CCRequest/blob/master/HTTP/ProtocolHelper/CCCacheRequest.h)实现自己的业务基类
-* Promise以及其他设计还有需要完善的地方,欢迎提ISSUE,或者给我发邮件.设计的初衷是尽可能`优雅地`满足`绝大多数`的网络使用场景,希望以您的网络层方案设计思想相互交流~
+* Please check [CCRequest](https://github.com/xincc/CCRequest/blob/master/HTTP/NetworkHelper/Request/CCRequest.h) for more details
+* The most recommend way is creating your own Base Class recommend inherited[CCCacheRequest](https://github.com/xincc/CCRequest/blob/master/HTTP/ProtocolHelper/CCCacheRequest.h)
+* There are many places need to optimize.Welcome to create ISSUE or [send me a emial](mailto://xincc.wang@gmail.com). My original intention is resove `the vast majority of Networking Request` `politely`, and I am eager for communicating with your design philosophy.
 
 ## TODO
 
-* Mock数据方案
+* Mock solution
 
 ## License
 
