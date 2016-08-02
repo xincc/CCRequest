@@ -1,7 +1,7 @@
 
 # CCRequest
 
-[中文介绍](https://github.com/xincc/CCRequest/README-CN.md)
+[中文介绍](https://github.com/xincc/CCRequest/blob/master/README-CN.md)
 
 A dancing HTTP request framework base on AFNetworking 3.x for iOS & MacOS
 
