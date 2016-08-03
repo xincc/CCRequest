@@ -29,7 +29,7 @@ typedef id(^CCPromiseEventHandler)(id);
 //不能放在链首
 @property (nonatomic, copy) CCPromise*(^catch)(void(^)(id reason));
 
-@property (nonatomic, copy, readonly) void(^done)();
+@property (nonatomic, copy) dispatch_block_t done;
 
 @property (nonatomic, copy) dispatch_block_t run;
 

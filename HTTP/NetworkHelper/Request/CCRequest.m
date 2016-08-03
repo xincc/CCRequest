@@ -140,6 +140,13 @@
                 [self requestWithSuccess:NULL failure:NULL];
             };
             
+            promise.done = ^() {
+                __strong __typeof(weakSelf) self = weakSelf;
+                if (self.status == CCRequestStatusRunning) {
+                    [self stop];
+                }
+            };
+            
             //[!]若不持有一个Request的引用
             //[!]将产生空指针中断promise链
             

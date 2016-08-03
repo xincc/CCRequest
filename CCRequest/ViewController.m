@@ -25,10 +25,10 @@
     //默认是测试next的catch功能(任务链上将会发生异常)
     //若希望看到正常的任务链 请将 SampleRequestModel.m 文件中的requestUrl设置修改为将会成功的case
     
-    [self testNext];
+//    [self testNext];
     
 //    [self testThen];
-//    [self testAll];
+    [self testAll];
 //    [self testNormal];
     
 }

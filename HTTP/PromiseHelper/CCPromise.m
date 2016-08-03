@@ -13,7 +13,6 @@ typedef CCPromise*(^CCPromiseWorkEventHandler)();
 
 @interface CCPromise()
 
-@property (nonatomic, copy  ) void(^done)();
 @property (nonatomic, strong) id data;
 @property (nonatomic, weak  ) CCPromise *resolver;
 @property (nonatomic, assign) BOOL called;
@@ -311,24 +310,37 @@ typedef CCPromise*(^CCPromiseWorkEventHandler)();
     CCPromise *resolver = [CCPromise promise];
     
     __block NSInteger resolvedCount = 0;
-    NSMutableArray *res = [NSMutableArray arrayWithCapacity:promises.count];
+    
+    NSMutableDictionary *resultHash = [NSMutableDictionary dictionaryWithCapacity:promises.count];
     
     CCPromiseEventHandler(^createResolvedHandler)(NSInteger) = ^CCPromiseEventHandler(NSInteger index) {
+        __block NSInteger captureIndex = index;
         return ^id(id data) {
-            [res addObject:data];
+            [resultHash setObject:data forKey:_S(@"%zd",captureIndex)];
             if (++resolvedCount >= promises.count) {
-                return [resolver fulfill:res];
+                NSArray *keys = [[resultHash allKeys] sortedArrayUsingSelector:@selector(compare:)];
+                NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:0];
+                for (NSString *key in keys) {
+                    [resultArray addObject:resultHash[key]];
+                }
+                return [resolver fulfill:resultArray];
             }
             return nil;
         };
     };
     
-    CCPromiseEventHandler rejectedHandler = ^id(id reason) {
-        return [resolver reject:reason];
-    };
-    
     [promises enumerateObjectsUsingBlock:^(CCPromise * _Nonnull promise, NSUInteger idx, BOOL * _Nonnull stop) {
         NSAssert([promise isKindOfClass:CCPromise.class], @"require instance of CCPromise");
+        
+        CCPromiseEventHandler rejectedHandler = ^id(id reason) {
+            for (CCPromise *object in promises) {
+                if (object != promise) {
+                    object.done();
+                }
+            }
+            return [resolver reject:reason];
+        };
+        
         promise.then(createResolvedHandler(idx), rejectedHandler);
     }];
     
@@ -349,7 +361,7 @@ typedef CCPromise*(^CCPromiseWorkEventHandler)();
 
 #pragma mark - Getter
 
-- (void (^)())done {
+- (dispatch_block_t)done {
     if (!_done) {
         __weak __typeof(self) weakSelf = self;
         _done = [^() {
