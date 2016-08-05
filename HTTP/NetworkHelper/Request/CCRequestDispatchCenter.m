@@ -51,7 +51,8 @@
 - (AFHTTPSessionManager *)configManager:(CCRequest *)request {
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    
+    request.manager = manager;
+
     switch (request.respSerializerType) {
         case CCResponseSerializerTypeRawData: {
             manager.responseSerializer = [AFHTTPResponseSerializer serializer];
@@ -104,7 +105,6 @@
     CCLogInfo(@"%@",str);
     
     AFHTTPSessionManager *manager = [self configManager:request];
-    request.manager = manager;
     
     [request toggleAccessoriesWillStartCallBack];
 

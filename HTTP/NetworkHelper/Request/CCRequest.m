@@ -31,6 +31,10 @@
 
 #pragma mark - Lifecycle
 
+- (void)dealloc {
+    [self.manager invalidateSessionCancelingTasks:YES];
+}
+
 - (instancetype)init {
     self = [super init];
     if (self) {
