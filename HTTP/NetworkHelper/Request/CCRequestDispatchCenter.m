@@ -62,6 +62,9 @@
             manager.responseSerializer = [AFJSONResponseSerializer serializer];
             break;
         }
+        default: {
+            break;
+        }
     }
     
     NSMutableSet* acceptableContentTypeSet = [NSMutableSet setWithSet:manager.responseSerializer.acceptableContentTypes];
@@ -122,13 +125,23 @@
             break;
         }
         case CCRequestMethodPost: {
-            request.sessionTask = [manager POST:request.requestUrl parameters:request.requestArgument constructingBodyWithBlock:request.constructingBodyBlock progress:request.resumableUploadProgressBlock success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                __strong __typeof(weakSelf) self = weakSelf;
-                [self handleRequestResult:task responseObject:responseObject error:nil];
-            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                __strong __typeof(weakSelf) self = weakSelf;
-                [self handleRequestResult:task responseObject:nil error:error];
-            }];
+            if (!request.constructingBodyBlock) {
+                request.sessionTask = [manager POST:request.requestUrl parameters:request.requestArgument progress:request.resumableUploadProgressBlock success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                    __strong __typeof(weakSelf) self = weakSelf;
+                    [self handleRequestResult:task responseObject:responseObject error:nil];
+                } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                    __strong __typeof(weakSelf) self = weakSelf;
+                    [self handleRequestResult:task responseObject:nil error:error];
+                }];
+            } else {
+                request.sessionTask = [manager POST:request.requestUrl parameters:request.requestArgument constructingBodyWithBlock:request.constructingBodyBlock progress:request.resumableUploadProgressBlock success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                    __strong __typeof(weakSelf) self = weakSelf;
+                    [self handleRequestResult:task responseObject:responseObject error:nil];
+                } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                    __strong __typeof(weakSelf) self = weakSelf;
+                    [self handleRequestResult:task responseObject:nil error:error];
+                }];
+            }
             break;
         }
         case CCRequestMethodHead: {
