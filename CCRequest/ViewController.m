@@ -16,7 +16,6 @@
 
 @implementation ViewController
 
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -36,10 +35,10 @@
 - (void)testThen
 {
     //开始第一个异步任务
-    SamplePHPRequest.new.promise.then(^id(id data){
+    SamplePHPRequest.promise.then(^id(id data){
         //获取第一个数据的返回结果
         //开始第二个异步任务
-        return SamplePHPRequest.new.promise;
+        return SamplePHPRequest.promise;
         
     },^id(CCResponseError *reason){
         
@@ -61,7 +60,7 @@
 
 - (void)testNext
 {
-    SamplePHPRequest.new.promise.next(^id(id data) {
+    SamplePHPRequest.promise.next(^id(id data) {
         
         //处理第一个请求的response 并将处理结果传入下一个promise
         CCLogInfo(@"%@",data);
@@ -72,7 +71,7 @@
         //获取上一个promise的处理结果
         //开始下一个网络请求
         
-        return SamplePHPRequest.new.promise;
+        return SamplePHPRequest.promise;
         
     }).next(^id(id data) {
         
@@ -91,7 +90,7 @@
 
 - (void)testAll
 {
-    [CCPromise all:@[SampleRequest.new.promise, SamplePHPRequest.new.promise]].then(^id(id data) {
+    [CCPromise all:@[SampleRequest.promise, SamplePHPRequest.promise]].then(^id(id data) {
         
         //任务蔟都完成后调用逻辑
         CCLogInfo(@"获得数据: %@",data);

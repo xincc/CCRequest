@@ -9,9 +9,7 @@
 #import "CCResponse.h"
 #import "CCRequestConstants.h"
 
-@interface CCResponse () {
-    dispatch_semaphore_t _lock;
-}
+@interface CCResponse ()
 
 @property (nonatomic, strong) id responseObject;
 @property (nonatomic, assign) CCResponseSerializerType respSerializerType;
@@ -27,15 +25,6 @@
 @end
 
 @implementation CCResponse
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        _lock = dispatch_semaphore_create(1);
-    }
-    return self;
-}
 
 - (instancetype)initWithRespType:(CCResponseSerializerType)type
                      sessionTask:(NSURLSessionTask *)task
@@ -62,7 +51,6 @@
 }
 
 - (id)responseJSONObject {
-    dispatch_semaphore_wait(self->_lock, DISPATCH_TIME_FOREVER);
     if (!_responseJSONObject && self.responseObject) {
         switch (self.respSerializerType) {
             case CCResponseSerializerTypeJSON: {
@@ -80,12 +68,10 @@
             }
         }
     }
-    dispatch_semaphore_signal(self->_lock);
     return _responseJSONObject;
 }
 
 - (NSData *)responseData {
-    dispatch_semaphore_wait(self->_lock, DISPATCH_TIME_FOREVER);
     if (!_responseData && self.responseObject) {
         switch (self.respSerializerType) {
             case CCResponseSerializerTypeJSON: {
@@ -103,16 +89,13 @@
             }
         }
     }
-    dispatch_semaphore_signal(self->_lock);
     return _responseData;
 }
 
 - (NSString *)responseString {
-    dispatch_semaphore_wait(self->_lock, DISPATCH_TIME_FOREVER);
     if (!_responseString && self.responseData) {
         self.responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
     }
-    dispatch_semaphore_signal(self->_lock);
     return _responseString;
 }
 
@@ -121,30 +104,30 @@
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [[CCResponse alloc] init];
     if (self) {
-        self.respSerializerType = [coder decodeIntegerForKey:@"respSerializerType"];
-        self.responseString     = [coder decodeObjectForKey:@"responseString"];
-        self.responseHeaders    = [coder decodeObjectForKey:@"responseHeaders"];
-        self.suggestedFilename  = [coder decodeObjectForKey:@"suggestedFilename"];
-        self.statusCode         = [coder decodeIntegerForKey:@"statusCode"];
+        self.respSerializerType = [coder decodeIntegerForKey:NSStringFromSelector(@selector(respSerializerType))];
+        self.responseString     = [coder decodeObjectForKey:NSStringFromSelector(@selector(responseString))];
+        self.responseHeaders    = [coder decodeObjectForKey:NSStringFromSelector(@selector(responseHeaders))];
+        self.suggestedFilename  = [coder decodeObjectForKey:NSStringFromSelector(@selector(suggestedFilename))];
+        self.statusCode         = [coder decodeIntegerForKey:NSStringFromSelector(@selector(statusCode))];
         if (self.respSerializerType == CCResponseSerializerTypeJSON) {
-            self.responseJSONObject = [coder decodeObjectForKey:@"responseJSONObject"];
+            self.responseJSONObject = [coder decodeObjectForKey:NSStringFromSelector(@selector(responseJSONObject))];
         } else {
-            self.responseData       = [coder decodeObjectForKey:@"responseData"];
+            self.responseData       = [coder decodeObjectForKey:NSStringFromSelector(@selector(responseData))];
         }
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:self.responseString forKey:@"responseString"];
-    [aCoder encodeObject:self.responseHeaders forKey:@"responseHeaders"];
-    [aCoder encodeObject:self.suggestedFilename forKey:@"suggestedFilename"];
-    [aCoder encodeInteger:self.statusCode forKey:@"statusCode"];
-    [aCoder encodeInteger:self.respSerializerType forKey:@"respSerializerType"];
+    [aCoder encodeObject:self.responseString forKey:NSStringFromSelector(@selector(responseString))];
+    [aCoder encodeObject:self.responseHeaders forKey:NSStringFromSelector(@selector(responseHeaders))];
+    [aCoder encodeObject:self.suggestedFilename forKey:NSStringFromSelector(@selector(suggestedFilename))];
+    [aCoder encodeInteger:self.statusCode forKey:NSStringFromSelector(@selector(statusCode))];
+    [aCoder encodeInteger:self.respSerializerType forKey:NSStringFromSelector(@selector(respSerializerType))];
     if (self.respSerializerType == CCResponseSerializerTypeJSON) {
-        [aCoder encodeObject:self.responseJSONObject forKey:@"responseJSONObject"];
+        [aCoder encodeObject:self.responseJSONObject forKey:NSStringFromSelector(@selector(responseJSONObject))];
     } else {
-        [aCoder encodeObject:self.responseData forKey:@"responseData"];
+        [aCoder encodeObject:self.responseData forKey:NSStringFromSelector(@selector(responseData))];
     }
 }
 

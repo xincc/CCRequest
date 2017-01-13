@@ -231,7 +231,7 @@
  *  @return the promise object
  */
 - (CCPromise *)promise;
-
++ (CCPromise *)promise;
 
 /**
  *  Set request argument, use this mthod replace setRequestArgument: 

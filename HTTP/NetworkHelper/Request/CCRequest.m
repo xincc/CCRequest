@@ -132,6 +132,10 @@
 
 @implementation CCRequest (Promise)
 
++ (CCPromise *)promise {
+    return [[self.class new] promise];
+}
+
 - (CCPromise *)promise {
     
     if (!_promise) {
