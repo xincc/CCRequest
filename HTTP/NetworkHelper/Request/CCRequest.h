@@ -17,7 +17,6 @@
 @interface CCRequest : NSObject {
     
     @protected
-    CCRequestStatus _status;
     CCResponseSerializerType _respSerializerType;
 }
 
@@ -41,6 +40,12 @@
 
 // Request timeout stamp
 @property (nonatomic, assign) NSTimeInterval timeout;
+
+// Retry times
+@property (nonatomic, assign) NSInteger retryTimes;
+
+// status
+@property (nonatomic, assign, readonly) CCRequestStatus status;
 
 /**
  *  Request serializer type.

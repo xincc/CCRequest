@@ -27,9 +27,9 @@
 //    [self testNext];
     
 //    [self testThen];
-    [self testAll];
-//    [self testNormal];
-    
+//    [self testAll];
+    [self testNormal];
+
 }
 
 - (void)testThen
@@ -113,13 +113,11 @@
     } failure:^(CCResponseError *error, CCRequest *request) {
         CCLogInfo(@"Cancel后将不会调用回调函数");
     }] appendAccessory:self];
-    
-    CCLogInfo(@"start");
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [request cancel];
-    });
-    
+
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [request cancel];
+//    });
+
     /**
      
      2016-07-27 21:30:23.739 CCRequest[13574:585998]
