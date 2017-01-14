@@ -323,6 +323,13 @@
         }
     }
 }
+- (void)toggleAccessoriesWillRetryCallBack {
+    for (id<CCRequestAccessory> accessory in _accesoris) {
+        if ([accessory respondsToSelector:@selector(requestWillRetry:)]) {
+            [accessory requestWillRetry:self];
+        }
+    }
+}
 
 @end
 

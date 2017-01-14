@@ -30,4 +30,6 @@
 
 - (void)toggleAccessoriesDidCompleteCallBack;
 
+- (void)toggleAccessoriesWillRetryCallBack;
+
 @end
