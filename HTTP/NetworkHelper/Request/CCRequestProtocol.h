@@ -24,10 +24,10 @@
 @optional
 - (void)requestWillStart:(CCRequest*)request;
 - (void)requestCanceled:(CCRequest*)request;
+- (void)requestWillRetry:(CCRequest*)request;
 - (void)requestWillStop:(CCRequest*)request;
 - (void)requestDidStop:(CCRequest*)request;
 - (void)requestDidComplete:(CCRequest*)request;
-
 @end
 
 @protocol CCMultipartFormData <AFMultipartFormData>

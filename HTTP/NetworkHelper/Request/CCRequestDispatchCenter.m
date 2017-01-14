@@ -254,6 +254,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             __strong __typeof(weakSelf) self = weakSelf;
             [self removeRequest:b_request];
+            [b_request toggleAccessoriesWillRetryCallBack];
             [self dispatchRequest:b_request];
             b_request.retryTimes --;
         });
