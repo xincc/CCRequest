@@ -247,14 +247,23 @@
               rParam,rParam.
               sessionTask.response,
               lParam);
-    
-    __block CCRequest *b_request = rParam;
+
     __weak __typeof(self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^(){
-        __strong __typeof(weakSelf) self = weakSelf;
-        [b_request failWithError:lParam];
-        [self removeRequest:b_request];
-    });
+    __block CCRequest *b_request = rParam;
+    if (rParam.retryTimes > 0 && rParam.status != CCRequestStatusCanceled) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            __strong __typeof(weakSelf) self = weakSelf;
+            [self removeRequest:b_request];
+            [self dispatchRequest:b_request];
+            b_request.retryTimes --;
+        });
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^(){
+            __strong __typeof(weakSelf) self = weakSelf;
+            [b_request failWithError:lParam];
+            [self removeRequest:b_request];
+        });
+    }
 }
 
 - (void)SuccessWithlParam:(id)lParam RParam:(CCRequest *)rParam {

@@ -117,7 +117,7 @@
 
 - (void)setRequestCachePolicy:(CCRequestCachePolicy)requestCachePolicy {
     //请求发出后,不得再修改请求策略
-    if (self->_status == CCRequestStatusRunning) {
+    if (self.status == CCRequestStatusRunning) {
         CCLogError(@"[%@ >>]Can not set request cache policy while request is running.",NSStringFromClass(self.class));
         return;
     }

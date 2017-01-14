@@ -38,7 +38,7 @@
     
     self.requestMethod = CCRequestMethodPost;
     self.requestCachePolicy = CCRequestReloadRemoteDataIgnoringCacheData;
-
+    self.retryTimes = 3;
     return [super requestWithSuccess:success failure:failure];
 }
 

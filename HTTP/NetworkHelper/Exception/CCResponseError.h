@@ -12,7 +12,7 @@ typedef NS_ENUM(NSInteger, CCResponseErrorCode) {
     /**
      配置Post请求体(读取文件)失败
      */
-    kCCResponseErrorCodeConstructingBody = -1000,
+    kCCResponseErrorCodeConstructingBody = 10000,
     /**
      空的返回值
      */
