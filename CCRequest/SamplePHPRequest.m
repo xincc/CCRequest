@@ -32,7 +32,7 @@
     }
     
     //这个url用于测试失败的情况
-    self.requestUrl = @"http://nj03-vip-sandbox.nj03.baidu.com:8008/common-api/data/Superproductrecommendlist";
+    self.requestUrl = @"http://nj03-vip-sandbox.nj03.xincc.com:8008/common-api/data/Superproductrecommendlist";
     //这个url用于测试成功的请求
 //    self.requestUrl = @"http://www.chojer.com/sys.php/api/hot_search";
     
